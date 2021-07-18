@@ -22,19 +22,29 @@ export default class Add extends React.Component {
         
     }
 
-    handleSubmit = (event) => {
+     handleSubmit = (event) => {
         event.preventDefault()
-        const {data} = this.state
 
         const url = 'http://localhost:5000/book/create'
-        axios.post(url, {
-            title: data.title,
-            description: data.description,
-            publishDate: data.publishDate,
-            pages: data.pages
-        }).then((res) => {
-            console.log(res)    
-        })
+        const headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+        }
+    
+        axios.post(url, JSON.stringify({
+            title: this.state.title,
+            description: this.state.description,
+            publishDate: this.state.publishDate,
+            pages: this.state.pages
+        }), {headers: headers})
+        .then((res) => {
+            // this.setState({
+            //     title: null,
+            //     description: null,
+            //     publishDate:null,
+            //     pages:null
+            // })   
+        }) 
     }
     
     render() {
@@ -69,7 +79,7 @@ export default class Add extends React.Component {
                             <input  type="text" 
                                     className="form-control" 
                                     name="publishDate" 
-                                    value=""
+                                    value={this.state.publishDate}
                                     onChange={e => this.handleInput(e)} 
                                     placeholder="Published Date" />
                         </div>
@@ -78,7 +88,7 @@ export default class Add extends React.Component {
                             <input  type="text" 
                                     className="form-control" 
                                     name="pages" 
-                                    value=""
+                                    value={this.state.pages}
                                     onChange={e => this.handleInput(e)} 
                                     placeholder="Number of pages" />
                         </div>
