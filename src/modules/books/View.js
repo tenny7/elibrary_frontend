@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import {Link} from 'react-router-dom'
 
 export default class View extends React.Component {
 
@@ -7,62 +8,62 @@ export default class View extends React.Component {
         super(props);
 
         this.state = {
+            id:'',
             title: '',
-            description:'',
-            books: []
-        }
-        // this.displayBooks = this.displayBooks.bind(this)
+            books: [],
+            loggedIn: this.props.loggedIn
+        } 
     }
-
     
     getBooks = (event) => {
         const url = 'http://localhost:5000/books'
+
         const headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("token")}`
         }
-        axios.get(url)
+        
+        axios.get(url,{headers:headers})
         .then((res) => {
-            console.log(res.data)
             this.setState({
                 books: res.data
             })
         })
-    }
-
-    // displayBooks = (books) => {
-    //     if (!books.length) return null;
-
-        
-    //     return books.map( (book) => {
-    //         <div>
-    //             <h3>{book.title}</h3>
-    //             <p>{book.description}</p>
-    //         </div>
-    //     });   
-    // } 
+    } 
 
     componentDidMount(){
         this.getBooks();
     }
 
     render() {
+        
         return (
             <div className="container">
-                <h3 className="mt-4">Libray Books</h3>
-                <div className="row d-flex justify-content-between mt-3">
+                <h3 className="mt-4">List of books</h3>
+                <div className="row">
+                <div className="d-flex justify-content-between mt-3"  style={{ marginRight: 2}}>
                     {this.state.books.map( (book, index) => {
-                        return <div class="card" key={index} style={{width:18 + 'rem',}}>
+                        return <div class="card" key={index} style={{width: '200px', marginRight:'5px'}}>
                                     <div className="card-body">
-                                        <h5 className="card-title">{book.title}</h5>
-                                        {/* <h6 className="card-subtitle mb-2 text-muted">Card subtitle</h6> */}
-                                        {/* <p className="card-text">{book.description}</p> */}
-                                        <a href="#" className="card-link">Card link</a>
-                                        <a href="#" className="card-link">Another link</a>
+                                        <button className="btn btn-info">Pages: {book.pages}</button>
+                                        <h6 className="card-title">{book.title}</h6>
+                                        
+                                        <div className="d-flex justify-content-between">
+                                        { this.props.user ? 
+                                        <>
+                                        <Link className="btn btn-primary" to={`/edit/${book._id}`}>Edit</Link> 
+                                        </>
+                                        : 
+                                        <>
+                                        </>
+                                        }
+                                       
+                                        
+                                        </div>       
                                     </div>
                                 </div>
                     })}
-                    {/* {this.displayBooks(this.state.books)} */}
+                    </div>
                 </div>
             </div>
         )
